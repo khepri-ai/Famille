@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
 
+// Configuration Firebase injectée dynamiquement par Vite pour éviter les erreurs de build sur GitHub
 // @ts-ignore
 const firebaseConfig = __FIREBASE_CONFIG__ || {};
 

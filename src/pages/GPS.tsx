@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
 import { MapPin, Users } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useState, useEffect } from 'react';
 
 // Fix for default marker icons in Leaflet with React
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -17,13 +18,30 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const familyMembers = [
-  { id: 1, name: 'Marc', position: [48.8584, 2.2945], role: 'Father' },
+const STATIC_FAMILY = [
   { id: 2, name: 'Elena', position: [48.8606, 2.3376], role: 'Mother' },
   { id: 3, name: 'Thomas', position: [48.8534, 2.3488], role: 'Son' },
 ];
 
 export default function GPS() {
+  const [familyMembers, setFamilyMembers] = useState([...STATIC_FAMILY]);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('family_app_user');
+    if (savedUser) {
+      const user = JSON.parse(savedUser);
+      setFamilyMembers([
+        { id: 1, name: user.name, position: user.position || [48.8584, 2.2945], role: user.role },
+        ...STATIC_FAMILY
+      ]);
+    } else {
+      setFamilyMembers([
+        { id: 1, name: 'Marc', position: [48.8584, 2.2945], role: 'Father' },
+        ...STATIC_FAMILY
+      ]);
+    }
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -38,7 +56,8 @@ export default function GPS() {
 
       <div className="bg-surface-container rounded-xl overflow-hidden h-[500px] shadow-sm ring-1 ring-outline-variant/10 relative z-10">
         <MapContainer 
-          center={[48.8566, 2.3522]} 
+          key={familyMembers[0]?.position?.toString()}
+          center={familyMembers[0]?.position as [number, number] || [48.8566, 2.3522]} 
           zoom={13} 
           scrollWheelZoom={false}
           className="w-full h-full"

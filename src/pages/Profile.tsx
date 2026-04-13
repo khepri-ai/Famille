@@ -8,11 +8,14 @@ const DEFAULT_USER = {
   email: 'marc.famille@email.com',
   role: 'Chef de tribu',
   address: '15 Rue de la Paix, 75002 Paris',
-  avatar: 'https://picsum.photos/seed/marc/200/200'
+  avatar: 'https://picsum.photos/seed/marc/200/200',
+  position: [48.8584, 2.2945]
 };
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState(() => {
     const saved = localStorage.getItem('family_app_user');
     return saved ? JSON.parse(saved) : DEFAULT_USER;
@@ -25,10 +28,36 @@ export default function Profile() {
     setTempUser({ ...user });
   }, [user]);
 
-  const handleSave = () => {
-    setUser({ ...tempUser });
-    localStorage.setItem('family_app_user', JSON.stringify(tempUser));
+  const handleSave = async () => {
+    setIsSaving(true);
+    setError(null);
+    let newPosition = user.position;
+
+    // Only geocode if address changed
+    if (tempUser.address !== user.address) {
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(tempUser.address)}&limit=1`);
+        const data = await response.json();
+        if (data && data.length > 0) {
+          newPosition = [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+        } else {
+          setError("Adresse introuvable sur la carte.");
+          setIsSaving(false);
+          return;
+        }
+      } catch (error) {
+        console.error('Geocoding error:', error);
+        setError("Erreur lors de la recherche de l'adresse.");
+        setIsSaving(false);
+        return;
+      }
+    }
+
+    const updatedUser = { ...tempUser, position: newPosition };
+    setUser(updatedUser);
+    localStorage.setItem('family_app_user', JSON.stringify(updatedUser));
     setIsEditing(false);
+    setIsSaving(false);
   };
 
   const handleCancel = () => {
@@ -67,7 +96,10 @@ export default function Profile() {
             <h3 className="font-headline text-xl font-bold">Informations personnelles</h3>
             {!isEditing ? (
               <button 
-                onClick={() => setIsEditing(true)}
+                onClick={() => {
+                  setError(null);
+                  setIsEditing(true);
+                }}
                 className="p-2 hover:bg-surface-container-high rounded-full text-primary transition-colors"
               >
                 <Edit2 size={18} />
@@ -82,15 +114,38 @@ export default function Profile() {
                 </button>
                 <button 
                   onClick={handleSave}
-                  className="p-2 hover:bg-primary-container/20 rounded-full text-primary transition-colors"
+                  disabled={isSaving}
+                  className="p-2 hover:bg-primary-container/20 rounded-full text-primary transition-colors disabled:opacity-50"
                 >
-                  <Check size={18} />
+                  {isSaving ? (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    >
+                      <Check size={18} className="opacity-50" />
+                    </motion.div>
+                  ) : (
+                    <Check size={18} />
+                  )}
                 </button>
               </div>
             )}
           </div>
           
           <div className="space-y-1">
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mx-4 mb-2 p-2 bg-error-container/20 text-error text-xs font-bold rounded-lg text-center"
+                >
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <div className="flex items-center gap-4 p-4 rounded-xl hover:bg-surface-container-high transition-colors">
               <div className="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary">
                 <Mail size={20} />

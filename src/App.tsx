@@ -8,26 +8,29 @@ import Photos from './pages/Photos';
 import Recipes from './pages/Recipes';
 import GPS from './pages/GPS';
 import Profile from './pages/Profile';
+import { AuthProvider } from './context/AuthContext';
 
 export default function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-surface text-on-surface font-body selection:bg-primary/20">
-        <TopBar />
-        <main className="pb-24">
-          <AnimatePresence mode="wait">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/planning" element={<Planning />} />
-              <Route path="/photos" element={<Photos />} />
-              <Route path="/recipes" element={<Recipes />} />
-              <Route path="/gps" element={<GPS />} />
-              <Route path="/profile" element={<Profile />} />
-            </Routes>
-          </AnimatePresence>
-        </main>
-        <BottomNav />
-      </div>
+      <AuthProvider>
+        <div className="min-h-screen bg-surface text-on-surface font-body selection:bg-primary/20">
+          <TopBar />
+          <main className="pb-24">
+            <AnimatePresence mode="wait">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/planning" element={<Planning />} />
+                <Route path="/photos" element={<Photos />} />
+                <Route path="/recipes" element={<Recipes />} />
+                <Route path="/gps" element={<GPS />} />
+                <Route path="/profile" element={<Profile />} />
+              </Routes>
+            </AnimatePresence>
+          </main>
+          <BottomNav />
+        </div>
+      </AuthProvider>
     </Router>
   );
 }

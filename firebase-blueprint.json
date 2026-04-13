@@ -1,0 +1,29 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores personal information and location for a family member.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the user" },
+        "email": { "type": "string", "format": "email", "description": "Email address" },
+        "role": { "type": "string", "description": "Role in the family (e.g., Father, Mother)" },
+        "address": { "type": "string", "description": "Physical address" },
+        "avatar": { "type": "string", "format": "uri", "description": "URL to profile picture" },
+        "position": { 
+          "type": "array", 
+          "description": "[latitude, longitude] coordinates",
+          "items": { "type": "number" }
+        },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
+      },
+      "required": ["name", "email", "role"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Private profile data for each user."
+    }
+  }
+}

@@ -2,6 +2,7 @@ import { Home, Calendar, Image, UtensilsCrossed, Users, ChevronUp, MapPin, User 
 import { NavLink, useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 const STATIC_FAMILY = [
   { id: 2, name: 'Elena', role: 'Mother', position: [48.8606, 2.3376] },
@@ -9,26 +10,27 @@ const STATIC_FAMILY = [
 ];
 
 export default function BottomNav() {
+  const { profile } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [familyMembers, setFamilyMembers] = useState([...STATIC_FAMILY]);
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('family_app_user');
-    if (savedUser) {
-      const user = JSON.parse(savedUser);
-      setFamilyMembers([
-        { id: 1, name: user.name, role: user.role, position: user.position || [48.8584, 2.2945] },
+    let updatedMembers = [...STATIC_FAMILY];
+    if (profile) {
+      updatedMembers = [
+        { id: 1, name: profile.name, role: profile.role, position: profile.position || [48.8584, 2.2945] },
         ...STATIC_FAMILY
-      ]);
+      ];
     } else {
-      setFamilyMembers([
+      updatedMembers = [
         { id: 1, name: 'Marc', role: 'Father', position: [48.8584, 2.2945] },
         ...STATIC_FAMILY
-      ]);
+      ];
     }
-  }, []);
+    setFamilyMembers(updatedMembers);
+  }, [profile]);
 
   // Close menu when clicking outside
   useEffect(() => {

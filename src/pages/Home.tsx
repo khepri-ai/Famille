@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { Calendar as CalendarIcon, MapPin, ArrowRight, Play, ChevronRight, CalendarDays, Camera, Compass, Cloud, FileText, Utensils, Link as LinkIcon, Gamepad2, Plus } from 'lucide-react';
 import { clsx } from 'clsx';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const shortcuts = [
   { icon: CalendarDays, label: 'Planning', color: 'bg-primary-fixed', textColor: 'text-primary', path: '/planning' },
@@ -30,6 +31,9 @@ const recipes = [
 ];
 
 export default function Home() {
+  const { profile, user } = useAuth();
+  const firstName = profile?.name?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'la famille';
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -38,7 +42,7 @@ export default function Home() {
       className="max-w-5xl mx-auto px-6 pt-8 pb-32 space-y-12"
     >
       <section className="space-y-2">
-        <h2 className="font-headline text-5xl font-bold text-on-surface tracking-tight">Bonjour la famille !</h2>
+        <h2 className="font-headline text-5xl font-bold text-on-surface tracking-tight">Bonjour {firstName} !</h2>
         <p className="text-on-surface-variant font-medium text-lg italic opacity-80">Ravis de vous revoir au foyer.</p>
       </section>
 

@@ -5,6 +5,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 // Fix for default marker icons in Leaflet with React
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -25,19 +26,18 @@ const STATIC_FAMILY = [
 ];
 
 export default function GPS() {
+  const { profile } = useAuth();
   const [familyMembers, setFamilyMembers] = useState([...STATIC_FAMILY]);
   const [mapCenter, setMapCenter] = useState<[number, number]>([48.8566, 2.3522]);
   const [mapKey, setMapKey] = useState(0);
   const location = useLocation();
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('family_app_user');
     let updatedMembers = [...STATIC_FAMILY];
     
-    if (savedUser) {
-      const user = JSON.parse(savedUser);
+    if (profile) {
       updatedMembers = [
-        { id: 1, name: user.name, position: user.position || [48.8584, 2.2945], role: user.role },
+        { id: 1, name: profile.name, position: profile.position || [48.8584, 2.2945], role: profile.role },
         ...STATIC_FAMILY
       ];
     } else {
@@ -62,7 +62,7 @@ export default function GPS() {
       setMapCenter(updatedMembers[0].position as [number, number]);
       setMapKey(prev => prev + 1);
     }
-  }, [location.state]);
+  }, [profile, location.state]);
 
   const handleFocusMember = (position: [number, number]) => {
     setMapCenter(position);

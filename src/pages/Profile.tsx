@@ -1,40 +1,68 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { User, Mail, MapPin, Shield, Bell, LogOut, ChevronRight, Edit2, Check, X } from 'lucide-react';
+import { User, Mail, MapPin, Shield, Bell, LogOut, ChevronRight, Edit2, Check, X, LogIn } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-
-const DEFAULT_USER = {
-  name: 'Marc Lefebvre',
-  email: 'marc.famille@email.com',
-  role: 'Chef de tribu',
-  address: '15 Rue de la Paix, 75002 Paris',
-  avatar: 'https://picsum.photos/seed/marc/200/200',
-  position: [48.8584, 2.2945]
-};
+import { useAuth } from '../context/AuthContext';
 
 export default function Profile() {
+  const { user, profile, loading, login, logout, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('family_app_user');
-    return saved ? JSON.parse(saved) : DEFAULT_USER;
-  });
+  const [tempUser, setTempUser] = useState<any>(null);
 
-  const [tempUser, setTempUser] = useState({ ...user });
-
-  // Update tempUser when user changes (e.g. on first load)
+  // Initialize tempUser when profile is loaded
   useEffect(() => {
-    setTempUser({ ...user });
-  }, [user]);
+    if (profile) {
+      setTempUser({ ...profile });
+    }
+  }, [profile]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full"
+        />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-md mx-auto px-6 pt-20 text-center space-y-8"
+      >
+        <div className="w-24 h-24 bg-surface-container rounded-full flex items-center justify-center mx-auto text-on-surface-variant">
+          <User size={48} />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-3xl font-bold font-headline">Connectez-vous</h2>
+          <p className="text-on-surface-variant">Rejoignez votre tribu pour partager votre position et vos moments en famille.</p>
+        </div>
+        <button
+          onClick={login}
+          className="w-full py-4 bg-primary text-on-primary rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg hover:bg-primary/90 transition-all active:scale-95"
+        >
+          <LogIn size={20} />
+          Se connecter avec Google
+        </button>
+      </motion.div>
+    );
+  }
 
   const handleSave = async () => {
+    if (!tempUser) return;
     setIsSaving(true);
     setError(null);
-    let newPosition = user.position;
+    let newPosition = tempUser.position;
 
     // Only geocode if address changed
-    if (tempUser.address !== user.address) {
+    if (tempUser.address !== profile?.address) {
       try {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(tempUser.address)}&limit=1`);
         const data = await response.json();
@@ -53,17 +81,23 @@ export default function Profile() {
       }
     }
 
-    const updatedUser = { ...tempUser, position: newPosition };
-    setUser(updatedUser);
-    localStorage.setItem('family_app_user', JSON.stringify(updatedUser));
-    setIsEditing(false);
-    setIsSaving(false);
+    try {
+      await updateProfile({ ...tempUser, position: newPosition });
+      setIsEditing(false);
+    } catch (err) {
+      setError("Erreur lors de la sauvegarde.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
-    setTempUser({ ...user });
+    setTempUser({ ...profile });
     setIsEditing(false);
+    setError(null);
   };
+
+  const displayUser = tempUser || profile || {};
 
   return (
     <motion.div
@@ -75,8 +109,8 @@ export default function Profile() {
       <section className="text-center space-y-4">
         <div className="relative inline-block">
           <img 
-            src={user.avatar} 
-            alt={user.name} 
+            src={displayUser.avatar || user.photoURL || `https://picsum.photos/seed/${user.uid}/200/200`} 
+            alt={displayUser.name} 
             className="w-32 h-32 rounded-full border-4 border-surface-container-high shadow-xl object-cover"
             referrerPolicy="no-referrer"
           />
@@ -85,8 +119,8 @@ export default function Profile() {
           </div>
         </div>
         <div>
-          <h2 className="font-headline text-3xl font-bold text-on-surface">{user.name}</h2>
-          <p className="text-primary font-semibold uppercase tracking-widest text-xs mt-1">{user.role}</p>
+          <h2 className="font-headline text-3xl font-bold text-on-surface">{displayUser.name}</h2>
+          <p className="text-primary font-semibold uppercase tracking-widest text-xs mt-1">{displayUser.role}</p>
         </div>
       </section>
 
@@ -155,12 +189,12 @@ export default function Profile() {
                 {isEditing ? (
                   <input 
                     type="text"
-                    value={tempUser.name}
-                    onChange={(e) => setTempUser({ ...tempUser, name: e.target.value })}
+                    value={displayUser.name}
+                    onChange={(e) => setTempUser({ ...displayUser, name: e.target.value })}
                     className="w-full bg-surface-container-highest border-b-2 border-primary px-2 py-1 rounded-t-md focus:outline-none font-medium"
                   />
                 ) : (
-                  <p className="font-medium">{user.name}</p>
+                  <p className="font-medium">{displayUser.name}</p>
                 )}
               </div>
             </div>
@@ -174,12 +208,12 @@ export default function Profile() {
                 {isEditing ? (
                   <input 
                     type="email"
-                    value={tempUser.email}
-                    onChange={(e) => setTempUser({ ...tempUser, email: e.target.value })}
+                    value={displayUser.email}
+                    onChange={(e) => setTempUser({ ...displayUser, email: e.target.value })}
                     className="w-full bg-surface-container-highest border-b-2 border-primary px-2 py-1 rounded-t-md focus:outline-none font-medium"
                   />
                 ) : (
-                  <p className="font-medium">{user.email}</p>
+                  <p className="font-medium">{displayUser.email}</p>
                 )}
               </div>
             </div>
@@ -194,12 +228,12 @@ export default function Profile() {
                   {isEditing ? (
                     <input 
                       type="text"
-                      value={tempUser.address}
-                      onChange={(e) => setTempUser({ ...tempUser, address: e.target.value })}
+                      value={displayUser.address}
+                      onChange={(e) => setTempUser({ ...displayUser, address: e.target.value })}
                       className="w-full bg-surface-container-highest border-b-2 border-primary px-2 py-1 rounded-t-md focus:outline-none font-medium"
                     />
                   ) : (
-                    <p className="font-medium">{user.address}</p>
+                    <p className="font-medium">{displayUser.address || "Non renseignée"}</p>
                   )}
                 </div>
                 {!isEditing && (
@@ -224,7 +258,10 @@ export default function Profile() {
             <ChevronRight size={18} className="text-on-surface-variant" />
           </div>
           <div className="pt-4 mt-4 border-t border-outline-variant/30">
-            <div className="flex items-center gap-4 p-4 rounded-xl hover:bg-error-container/20 text-error transition-colors cursor-pointer">
+            <div 
+              onClick={logout}
+              className="flex items-center gap-4 p-4 rounded-xl hover:bg-error-container/20 text-error transition-colors cursor-pointer"
+            >
               <LogOut size={20} />
               <span className="font-bold">Déconnexion</span>
             </div>

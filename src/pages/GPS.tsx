@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Tooltip } from 'react-leaflet';
 import { MapPin, Users } from 'lucide-react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -49,6 +49,9 @@ export default function GPS() {
           />
           {familyMembers.map((member) => (
             <Marker key={member.id} position={member.position as [number, number]}>
+              <Tooltip permanent direction="top" offset={[0, -40]} className="bg-primary text-on-primary font-bold rounded-full px-3 py-1 border-none shadow-md">
+                {member.name}
+              </Tooltip>
               <Popup>
                 <div className="text-center p-1 min-w-[100px]">
                   <p className="font-headline font-bold text-lg text-primary m-0 leading-tight">{member.name}</p>
@@ -64,8 +67,10 @@ export default function GPS() {
         </MapContainer>
       </div>
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {familyMembers.map((member) => (
+      <section className="space-y-4">
+        <h3 className="font-headline text-2xl font-bold px-2">Membres de la tribu</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {familyMembers.map((member) => (
           <div key={member.id} className="bg-surface-container-low p-4 rounded-lg flex items-center gap-4 hover:bg-surface-container-high transition-colors">
             <div className="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center">
               <Users size={24} className="text-primary" />
@@ -80,6 +85,7 @@ export default function GPS() {
             </div>
           </div>
         ))}
+        </div>
       </section>
     </motion.div>
   );

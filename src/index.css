@@ -56,3 +56,15 @@
   background: #f5f5dc;
 }
 
+.leaflet-tooltip-top:before {
+  border-top-color: var(--color-primary) !important;
+}
+
+.leaflet-tooltip {
+  background-color: var(--color-primary) !important;
+  color: var(--color-on-primary) !important;
+  border: none !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+  font-family: var(--font-headline) !important;
+}
+

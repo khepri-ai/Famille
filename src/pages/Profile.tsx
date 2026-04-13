@@ -1,22 +1,33 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { User, Mail, MapPin, Shield, Bell, LogOut, ChevronRight, Edit2, Check, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+const DEFAULT_USER = {
+  name: 'Marc Lefebvre',
+  email: 'marc.famille@email.com',
+  role: 'Chef de tribu',
+  address: '15 Rue de la Paix, 75002 Paris',
+  avatar: 'https://picsum.photos/seed/marc/200/200'
+};
 
 export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState({
-    name: 'Marc Lefebvre',
-    email: 'marc.famille@email.com',
-    role: 'Chef de tribu',
-    address: '15 Rue de la Paix, 75002 Paris',
-    avatar: 'https://picsum.photos/seed/marc/200/200'
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('family_app_user');
+    return saved ? JSON.parse(saved) : DEFAULT_USER;
   });
 
   const [tempUser, setTempUser] = useState({ ...user });
 
+  // Update tempUser when user changes (e.g. on first load)
+  useEffect(() => {
+    setTempUser({ ...user });
+  }, [user]);
+
   const handleSave = () => {
     setUser({ ...tempUser });
+    localStorage.setItem('family_app_user', JSON.stringify(tempUser));
     setIsEditing(false);
   };
 

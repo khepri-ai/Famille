@@ -64,36 +64,36 @@ export default function TopBar() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 h-full w-80 bg-surface-container-highest z-[70] shadow-2xl border-r border-primary/20 p-8 flex flex-col"
+              className="fixed top-0 left-0 h-full w-64 bg-surface z-[70] shadow-2xl border-r border-primary/20 p-6 flex flex-col"
             >
-              <div className="flex justify-between items-center mb-12">
+              <div className="flex justify-between items-center mb-10">
                 <div className="flex flex-col">
-                  <span className="text-primary font-bold tracking-[0.3em] uppercase text-[10px] mb-1">Navigation</span>
-                  <h2 className="font-headline text-3xl font-bold text-on-surface">Menu</h2>
+                  <span className="text-primary font-bold tracking-[0.3em] uppercase text-[8px] mb-1">Navigation</span>
+                  <h2 className="font-headline text-2xl font-bold text-on-surface">Menu</h2>
                 </div>
                 <button 
                   onClick={() => setIsMenuOpen(false)}
-                  className="p-2 text-primary hover:bg-primary/10 rounded-full transition-colors"
+                  className="p-1.5 text-primary hover:bg-primary/10 rounded-full transition-colors"
                 >
-                  <X size={28} />
+                  <X size={24} />
                 </button>
               </div>
 
-              <nav className="space-y-2 flex-grow">
+              <nav className="space-y-1.5 flex-grow">
                 {menuItems.map((item) => (
                   <NavLink
                     key={item.path}
                     to={item.path}
                     onClick={() => setIsMenuOpen(false)}
                     className={({ isActive }) => clsx(
-                      "flex items-center gap-6 p-5 rounded-xl transition-all border group",
+                      "flex items-center gap-4 p-4 rounded-lg transition-all border group",
                       isActive 
-                        ? "bg-primary/10 border-primary text-primary shadow-lg" 
-                        : "bg-surface-container border-transparent hover:border-primary/30 text-on-surface-variant hover:text-primary"
+                        ? "bg-primary/10 border-primary text-primary shadow-sm" 
+                        : "bg-surface-container border-transparent hover:border-primary/20 text-on-surface-variant hover:text-primary"
                     )}
                   >
-                    <item.icon size={24} className={clsx("transition-transform group-hover:scale-110")} />
-                    <span className="font-bold uppercase tracking-[0.2em] text-xs">{item.label}</span>
+                    <item.icon size={20} className={clsx("transition-transform group-hover:scale-110")} />
+                    <span className="font-bold uppercase tracking-[0.15em] text-[10px]">{item.label}</span>
                   </NavLink>
                 ))}
               </nav>

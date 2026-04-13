@@ -53,6 +53,7 @@ export default function Favorites() {
   const [newFolderName, setNewFolderName] = useState('');
   const [newLinkTitle, setNewLinkTitle] = useState('');
   const [newLinkUrl, setNewLinkUrl] = useState('');
+  const [newLinkFolderId, setNewLinkFolderId] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -115,18 +116,20 @@ export default function Favorites() {
 
   const handleAddLink = async (e: FormEvent) => {
     e.preventDefault();
-    if (!user || !selectedFolderId || !newLinkTitle.trim() || !newLinkUrl.trim()) return;
+    const folderId = newLinkFolderId || selectedFolderId;
+    if (!user || !folderId || !newLinkTitle.trim() || !newLinkUrl.trim()) return;
 
     try {
       await addDoc(collection(db, 'bookmarks'), {
         title: newLinkTitle.trim(),
         url: newLinkUrl.trim(),
-        folderId: selectedFolderId,
+        folderId: folderId,
         userId: user.uid,
         createdAt: serverTimestamp()
       });
       setNewLinkTitle('');
       setNewLinkUrl('');
+      setNewLinkFolderId('');
       setIsAddLinkOpen(false);
     } catch (error) {
       handleFirestoreError(error, OperationType.CREATE, 'bookmarks');
@@ -179,12 +182,25 @@ export default function Favorites() {
           </h2>
           <p className="text-on-surface-variant text-sm mt-2 font-medium uppercase tracking-[0.2em]">Archives & Ressources Familiales</p>
         </div>
-        <button 
-          onClick={() => setIsAddFolderOpen(true)}
-          className="p-4 bg-primary text-on-primary rounded-xl shadow-2xl shadow-primary/20 hover:scale-105 transition-all border border-primary/50"
-        >
-          <FolderPlus size={24} />
-        </button>
+        <div className="flex gap-4">
+          <button 
+            onClick={() => setIsAddFolderOpen(true)}
+            className="p-4 bg-surface-container text-primary rounded-xl hover:bg-primary/10 transition-all border border-primary/20"
+            title="Nouveau Dossier"
+          >
+            <FolderPlus size={24} />
+          </button>
+          <button 
+            onClick={() => {
+              setNewLinkFolderId(selectedFolderId || '');
+              setIsAddLinkOpen(true);
+            }}
+            className="p-4 bg-primary text-on-primary rounded-xl shadow-2xl shadow-primary/20 hover:scale-105 transition-all border border-primary/50"
+            title="Nouveau Lien"
+          >
+            <Plus size={24} />
+          </button>
+        </div>
       </div>
 
       {/* Search Bar */}
@@ -402,12 +418,19 @@ export default function Favorites() {
                 </button>
               </div>
               <form onSubmit={handleAddLink} className="space-y-8">
-                <div className="p-5 bg-secondary/5 border border-secondary/20 rounded-xl flex items-center gap-4 mb-4">
-                  <FolderIcon size={24} className="text-secondary" />
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-secondary">Destination</p>
-                    <p className="font-bold text-on-surface uppercase tracking-widest">{selectedFolder?.title}</p>
-                  </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-[0.3em] text-primary mb-3 ml-1">Répertoire de destination</label>
+                  <select
+                    value={newLinkFolderId}
+                    onChange={(e) => setNewLinkFolderId(e.target.value)}
+                    className="w-full px-6 py-5 bg-surface-container border border-primary/10 rounded-xl focus:ring-2 focus:ring-primary/50 text-on-surface font-bold uppercase tracking-widest appearance-none"
+                    required
+                  >
+                    <option value="" disabled>Sélectionner un dossier</option>
+                    {folders.map(f => (
+                      <option key={f.id} value={f.id}>{f.title}</option>
+                    ))}
+                  </select>
                 </div>
                 <div className="space-y-6">
                   <div>

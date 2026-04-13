@@ -18,12 +18,44 @@
         "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
       },
       "required": ["name", "email", "role"]
+    },
+    "Folder": {
+      "title": "Folder",
+      "description": "A directory to organize links.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Name of the folder" },
+        "userId": { "type": "string", "description": "Owner ID" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "userId"]
+    },
+    "Bookmark": {
+      "title": "Bookmark",
+      "description": "A saved link inside a folder.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Display name for the link" },
+        "url": { "type": "string", "format": "uri", "description": "The actual URL" },
+        "folderId": { "type": "string", "description": "ID of the parent folder" },
+        "userId": { "type": "string", "description": "Owner ID" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "url", "folderId", "userId"]
     }
   },
   "firestore": {
     "/users/{userId}": {
       "schema": "UserProfile",
       "description": "Private profile data for each user."
+    },
+    "/folders/{folderId}": {
+      "schema": "Folder",
+      "description": "User folders for bookmarks."
+    },
+    "/bookmarks/{bookmarkId}": {
+      "schema": "Bookmark",
+      "description": "User bookmarks."
     }
   }
 }

@@ -49,6 +49,20 @@ service cloud.firestore {
              (!('position' in data) || (data.position is list && data.position.size() == 2));
     }
 
+    function isValidFolder(data) {
+      return data.keys().hasAll(['title', 'userId']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 100 &&
+             data.userId == request.auth.uid;
+    }
+
+    function isValidBookmark(data) {
+      return data.keys().hasAll(['title', 'url', 'folderId', 'userId']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() <= 1000 &&
+             data.url is string && data.url.size() > 0 && data.url.size() <= 2000 &&
+             data.folderId is string &&
+             data.userId == request.auth.uid;
+    }
+
     // ===============================================================
     // Rules
     // ===============================================================
@@ -58,6 +72,20 @@ service cloud.firestore {
       allow create: if isOwner(userId) && isValidUser(request.resource.data);
       allow update: if isOwner(userId) && isValidUser(request.resource.data);
       allow delete: if isAdmin();
+    }
+
+    match /folders/{folderId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && isValidFolder(request.resource.data);
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid && isValidFolder(request.resource.data);
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    match /bookmarks/{bookmarkId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && isValidBookmark(request.resource.data);
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid && isValidBookmark(request.resource.data);
+      allow delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
     }
 
     match /{path=**} {

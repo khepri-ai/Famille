@@ -1,4 +1,4 @@
-import { Home, Calendar, Image, UtensilsCrossed, Users, ChevronUp, MapPin, User } from 'lucide-react';
+import { Home, Calendar, Image, UtensilsCrossed, Users, ChevronUp, MapPin, User, Star } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { useState, useEffect, useRef } from 'react';
@@ -60,50 +60,65 @@ export default function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-surface/90 backdrop-blur-xl rounded-t-[2.5rem] shadow-[0_-4px_40px_rgba(27,29,14,0.06)]">
+    <nav className="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-surface/95 backdrop-blur-xl border-t border-primary/10 shadow-[0_-10px_50px_rgba(0,0,0,0.5)]">
       <NavLink
         to="/"
         className={({ isActive }) =>
           clsx(
-            'flex flex-col items-center justify-center px-5 py-2 transition-all duration-300 rounded-full',
+            'flex flex-col items-center justify-center px-5 py-2 transition-all duration-300 rounded-xl',
             isActive
-              ? 'bg-surface-container text-primary scale-105'
-              : 'text-on-surface/50 hover:scale-105'
+              ? 'bg-primary/10 text-primary scale-105'
+              : 'text-on-surface-variant hover:text-primary hover:scale-105'
           )
         }
       >
-        <Home size={24} className="mb-1" />
-        <span className="font-body text-[11px] font-semibold uppercase tracking-wider">Home</span>
+        <Home size={22} className="mb-1" />
+        <span className="font-body text-[10px] font-bold uppercase tracking-widest">Accueil</span>
       </NavLink>
 
       <NavLink
         to="/planning"
         className={({ isActive }) =>
           clsx(
-            'flex flex-col items-center justify-center px-5 py-2 transition-all duration-300 rounded-full',
+            'flex flex-col items-center justify-center px-5 py-2 transition-all duration-300 rounded-xl',
             isActive
-              ? 'bg-surface-container text-primary scale-105'
-              : 'text-on-surface/50 hover:scale-105'
+              ? 'bg-primary/10 text-primary scale-105'
+              : 'text-on-surface-variant hover:text-primary hover:scale-105'
           )
         }
       >
-        <Calendar size={24} className="mb-1" />
-        <span className="font-body text-[11px] font-semibold uppercase tracking-wider">Planning</span>
+        <Calendar size={22} className="mb-1" />
+        <span className="font-body text-[10px] font-bold uppercase tracking-widest">Agenda</span>
       </NavLink>
 
       <NavLink
         to="/photos"
         className={({ isActive }) =>
           clsx(
-            'flex flex-col items-center justify-center px-5 py-2 transition-all duration-300 rounded-full',
+            'flex flex-col items-center justify-center px-5 py-2 transition-all duration-300 rounded-xl',
             isActive
-              ? 'bg-surface-container text-primary scale-105'
-              : 'text-on-surface/50 hover:scale-105'
+              ? 'bg-primary/10 text-primary scale-105'
+              : 'text-on-surface-variant hover:text-primary hover:scale-105'
           )
         }
       >
-        <Image size={24} className="mb-1" />
-        <span className="font-body text-[11px] font-semibold uppercase tracking-wider">Photos</span>
+        <Image size={22} className="mb-1" />
+        <span className="font-body text-[10px] font-bold uppercase tracking-widest">Albums</span>
+      </NavLink>
+
+      <NavLink
+        to="/favorites"
+        className={({ isActive }) =>
+          clsx(
+            'flex flex-col items-center justify-center px-5 py-2 transition-all duration-300 rounded-xl',
+            isActive
+              ? 'bg-primary/10 text-primary scale-105'
+              : 'text-on-surface-variant hover:text-primary hover:scale-105'
+          )
+        }
+      >
+        <Star size={22} className="mb-1" />
+        <span className="font-body text-[10px] font-bold uppercase tracking-widest">Favoris</span>
       </NavLink>
 
       {/* Tribu Dropdown */}
@@ -111,52 +126,49 @@ export default function BottomNav() {
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className={clsx(
-            'flex flex-col items-center justify-center px-5 py-2 transition-all duration-300 rounded-full',
+            'flex flex-col items-center justify-center px-5 py-2 transition-all duration-300 rounded-xl',
             isMenuOpen
-              ? 'bg-primary text-on-primary scale-105'
-              : 'text-on-surface/50 hover:scale-105'
+              ? 'bg-primary text-on-primary scale-105 shadow-lg shadow-primary/20'
+              : 'text-on-surface-variant hover:text-primary hover:scale-105'
           )}
         >
-          <Users size={24} className="mb-1" />
-          <span className="font-body text-[11px] font-semibold uppercase tracking-wider">Tribu</span>
+          <Users size={22} className="mb-1" />
+          <span className="font-body text-[10px] font-bold uppercase tracking-widest">Tribu</span>
         </button>
 
         {isMenuOpen && (
-          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-56 bg-surface-container-high rounded-2xl shadow-2xl border border-outline-variant/20 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200">
-            <div className="p-3 border-b border-outline-variant/30 bg-surface-container-highest">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-primary">Membres de la famille</p>
+          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-6 w-64 bg-surface-container-highest rounded-2xl shadow-2xl border border-primary/20 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div className="p-4 border-b border-primary/10 bg-surface-container-highest">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Membres de la famille</p>
             </div>
-            <div className="max-h-64 overflow-y-auto">
+            <div className="max-h-80 overflow-y-auto no-scrollbar">
               {familyMembers.map((member) => (
                 <div 
                   key={member.id}
-                  className="px-4 py-3 hover:bg-surface-container-highest transition-colors flex items-center justify-between group/item"
+                  className="px-4 py-4 hover:bg-primary/5 transition-colors flex items-center justify-between group/item border-b border-outline-variant/10 last:border-0"
                 >
                   <div className="flex flex-col">
                     <span className="font-bold text-on-surface text-sm">{member.name}</span>
-                    <span className="text-[10px] text-on-surface-variant font-medium uppercase tracking-tighter">{member.role}</span>
+                    <span className="text-[10px] text-primary/70 font-bold uppercase tracking-wider">{member.role}</span>
                   </div>
-                  <div className="flex gap-1">
+                  <div className="flex gap-2">
                     <button 
                       onClick={() => handleLocate(member.id)}
-                      className="p-2 bg-primary-container/30 text-primary rounded-full hover:bg-primary hover:text-on-primary transition-all"
+                      className="p-2.5 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-on-primary transition-all"
                       title="Situer sur la carte"
                     >
-                      <MapPin size={14} />
+                      <MapPin size={16} />
                     </button>
                     <button 
                       onClick={() => handleGoToProfile(member.id)}
-                      className="p-2 bg-secondary-container/30 text-secondary rounded-full hover:bg-secondary hover:text-on-secondary transition-all"
+                      className="p-2.5 bg-secondary/10 text-secondary rounded-lg hover:bg-secondary hover:text-on-secondary transition-all"
                       title="Voir le profil"
                     >
-                      <User size={14} />
+                      <User size={16} />
                     </button>
                   </div>
                 </div>
               ))}
-            </div>
-            <div className="p-2 bg-surface-container-highest/50 flex justify-center">
-              <ChevronUp size={16} className="text-on-surface-variant animate-bounce" />
             </div>
           </div>
         )}
@@ -166,15 +178,15 @@ export default function BottomNav() {
         to="/recipes"
         className={({ isActive }) =>
           clsx(
-            'flex flex-col items-center justify-center px-5 py-2 transition-all duration-300 rounded-full',
+            'flex flex-col items-center justify-center px-5 py-2 transition-all duration-300 rounded-xl',
             isActive
-              ? 'bg-surface-container text-primary scale-105'
-              : 'text-on-surface/50 hover:scale-105'
+              ? 'bg-primary/10 text-primary scale-105'
+              : 'text-on-surface-variant hover:text-primary hover:scale-105'
           )
         }
       >
-        <UtensilsCrossed size={24} className="mb-1" />
-        <span className="font-body text-[11px] font-semibold uppercase tracking-wider">Recipes</span>
+        <UtensilsCrossed size={22} className="mb-1" />
+        <span className="font-body text-[10px] font-bold uppercase tracking-widest">Cuisine</span>
       </NavLink>
     </nav>
   );

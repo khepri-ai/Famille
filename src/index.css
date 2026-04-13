@@ -1,37 +1,38 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-headline: "Noto Serif", serif;
-  --font-body: "Plus Jakarta Sans", sans-serif;
+  --font-headline: "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
 
-  --color-primary: #536045;
-  --color-primary-container: #6b795d;
-  --color-on-primary: #ffffff;
+  /* Palette inspirée du document technique "Pot-au-Feu" */
+  --color-primary: #C5A059; /* Or / Laiton */
+  --color-primary-container: #4A3B1F;
+  --color-on-primary: #121212;
   
-  --color-secondary: #7c5730;
-  --color-secondary-container: #fdcb9b;
-  --color-secondary-fixed: #ffdcbd;
-  --color-on-secondary-fixed: #2c1600;
-  --color-on-secondary-fixed-variant: #61401b;
+  --color-secondary: #5D101E; /* Bordeaux / Vin */
+  --color-secondary-container: #2D080F;
+  --color-secondary-fixed: #5D101E;
+  --color-on-secondary-fixed: #F5F5F5;
+  --color-on-secondary-fixed-variant: #D1B8B8;
 
-  --color-tertiary: #695a3c;
-  --color-tertiary-fixed: #f5e0ba;
+  --color-tertiary: #4A6741; /* Vert Sauge / Bouquet Garni */
+  --color-tertiary-fixed: #1E2B1A;
 
-  --color-surface: #fbfbe2;
-  --color-surface-container: #efefd7;
-  --color-surface-container-low: #f5f5dc;
-  --color-surface-container-high: #eaead1;
-  --color-surface-container-highest: #e4e4cc;
-  --color-surface-bright: #fbfbe2;
+  --color-surface: #121212; /* Noir Charbon */
+  --color-surface-container: #1A1A1A;
+  --color-surface-container-low: #151515;
+  --color-surface-container-high: #222222;
+  --color-surface-container-highest: #2A2A2A;
+  --color-surface-bright: #252525;
   
-  --color-on-surface: #1b1d0e;
-  --color-on-surface-variant: #454840;
+  --color-on-surface: #F5F5F5; /* Crème / Blanc cassé */
+  --color-on-surface-variant: #A8A29E; /* Gris chaud */
   
-  --color-outline-variant: #c5c8bd;
+  --color-outline-variant: #333333;
 
-  --radius-lg: 2rem;
-  --radius-xl: 3rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
 }
 
 @layer base {
